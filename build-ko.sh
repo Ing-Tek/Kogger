@@ -14,7 +14,7 @@ usage() {
 microservice=kogger
 user=docker #pass=tcuser
 baseImageTag=v0.1.3
-imageTag=ZOLARA_GIT_TAG
+imageTag=KOGGER_GIT_TAG
 
 while getopts "t:h" option; do
     options+="$option"
