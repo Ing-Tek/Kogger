@@ -58,12 +58,14 @@ jobs:
     - uses: ko-build/setup-ko@v0.8
     - name: Build and push Docker image using ko and .ko.yaml
       env:
-        KO_DOCKER_REPO: nexuszolara.me/kogger
+        KO_DOCKER_REPO: ghcr.io/ing-tek/kogger
         GODEBUG: x509ignoreCN=1
       run: |
         ko login nexuszolara.me --username ${{ secrets.HARBOR_USERNAME }} --password ${{ secrets.HARBOR_PASSWORD }}
-        ko build --bare -t ${{ env.KOGGER_GIT_TAG }} .
+        ko build -t ${{ env.KOGGER_GIT_TAG }} .
         # ./build-ko.sh -t ${{ env.KOGGER_GIT_TAG }}
+        docker tag ghcr.io/ing-tek/kogger/kogger:${{ env.KOGGER_GIT_TAG }} nexuszolara.me/kogger/kogger:${{ env.KOGGER_GIT_TAG }}
+        docker push nexuszolara.me/kogger/kogger:${{ env.KOGGER_GIT_TAG }}
 
     - name: Push to Harbor
       run: |

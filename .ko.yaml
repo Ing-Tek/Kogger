@@ -1,7 +1,6 @@
 builds:
 - id: kogger
   dir: ./
-  outputImage: nexuszolara.me/kogger/kogger
+  # outputImage: nexuszolara.me/kogger/kogger
   ldflags:
   - -s -w
-  
