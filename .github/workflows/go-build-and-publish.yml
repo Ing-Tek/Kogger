@@ -62,9 +62,13 @@ jobs:
         GODEBUG: x509ignoreCN=1
       run: |
         ko login nexuszolara.me --username ${{ secrets.HARBOR_USERNAME }} --password ${{ secrets.HARBOR_PASSWORD }}
-        ko build --local -t ${{ env.KOGGER_GIT_TAG }} .
+        
+        IMAGE_NAME=$(ko build --local -t ${{ env.KOGGER_GIT_TAG }} .)
+        echo "Built image: $IMAGE_NAME"
+        
         docker images
-        docker tag ko.local/kogger:${{ env.KOGGER_GIT_TAG }} nexuszolara.me/kogger/kogger:${{ env.KOGGER_GIT_TAG }}
+        
+        docker tag $IMAGE_NAME nexuszolara.me/kogger/kogger:${{ env.KOGGER_GIT_TAG }}
         docker push nexuszolara.me/kogger/kogger:${{ env.KOGGER_GIT_TAG }}
 
     - name: Push to Harbor
