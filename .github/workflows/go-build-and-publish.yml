@@ -67,11 +67,6 @@ jobs:
 
     - name: Push to Harbor
       run: |
-        docker images
-        echo "Pushing the image to Harbor"
-        # docker tag ko.local/kogger:${{ env.KOGGER_GIT_TAG }} nexuszolara.me/kogger/kogger:${{ env.KOGGER_GIT_TAG }}
-        docker push nexuszolara.me/kogger/kogger:${{ env.KOGGER_GIT_TAG }}
-
         echo "Pushing the Helm chart to Harbor"
         sed -i 's#KOGGER_GIT_TAG#${{ env.KOGGER_GIT_TAG }}#g' helm/kogger/Chart.yaml
         sed -i 's#KOGGER_GIT_TAG#${{ env.KOGGER_GIT_TAG }}#g' helm/kogger/values.yaml
