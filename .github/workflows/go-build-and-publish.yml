@@ -62,8 +62,8 @@ jobs:
         GODEBUG: x509ignoreCN=1
       run: |
         ko login nexuszolara.me --username ${{ secrets.HARBOR_USERNAME }} --password ${{ secrets.HARBOR_PASSWORD }}
-        # ko build -t ${{ env.KOGGER_GIT_TAG }} .
-        ./build-ko.sh -t ${{ env.KOGGER_GIT_TAG }}
+        ko build -t ${{ env.KOGGER_GIT_TAG }} .
+        # ./build-ko.sh -t ${{ env.KOGGER_GIT_TAG }}
 
     - name: Push to Harbor
       run: |
