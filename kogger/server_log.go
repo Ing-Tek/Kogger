@@ -92,9 +92,13 @@ func (*server) GetLogs(ctx context.Context, in *Void) (*Pods, error) {
 	}
 
 	pods := &Pods{}
+	logger.Debug(grpcToken, "########## Pod Logs ##########")
 	for podLog := range podLogsChan {
 		if podLog != nil {
 			pods.Pods = append(pods.Pods, podLog)
+			logger.Debug(grpcToken, "namespace: %s, pod: %s, status: %s", podLog.Namespace, podLog.Name, podLog.Status)
+			logger.Debug(grpcToken, "Logs: %s", podLog.Logs)
+			logger.Debug(grpcToken, "")
 		}
 	}
 	logger.Debug(grpcToken, "Returning %d pods with logs", len(pods.Pods))
