@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"sync"
+	"time"
 
 	. "github.com/Ing-Tek/Kogger/koggerrpc"
 	grpctoken "github.com/ZolaraProject/library/grpctoken"
@@ -39,20 +40,26 @@ func (*server) GetLogs(ctx context.Context, in *Void) (*Pods, error) {
 	}
 
 	podLogsChan := make(chan *Pod, len(allpods.Items))
-	errChan := make(chan error, len(allpods.Items))
 	wg := &sync.WaitGroup{}
-	wg.Add(len(allpods.Items))
-	for _, pod := range allpods.Items {
-		wg.Add(1)
-		defer wg.Done()
 
+	for _, pod := range allpods.Items {
+		if pod.Status.Phase != v1.PodRunning {
+			logger.Debug(grpcToken, "Skipping pod %s in namespace %s - status: %s", pod.Name, pod.Namespace, pod.Status.Phase)
+			continue
+		}
+
+		wg.Add(1)
 		logger.Debug(grpcToken, "Pod found: %s in namespace %s", pod.Name, pod.Namespace)
 		go func(pod v1.Pod) {
+			defer wg.Done()
+
+			ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+			defer cancel()
+
 			req := clientset.CoreV1().Pods(pod.Namespace).GetLogs(pod.Name, &v1.PodLogOptions{})
-			podLogs, err := req.Stream(context.TODO())
+			podLogs, err := req.Stream(ctx)
 			if err != nil {
-				logger.Err(grpcToken, "Failed to get logs for pod %s in namespace %s: %s", pod.Name, pod.Namespace, err)
-				errChan <- err
+				logger.Warn(grpcToken, "Failed to get logs for pod %s in namespace %s: %s", pod.Name, pod.Namespace, err)
 				return
 			}
 			defer podLogs.Close()
@@ -64,8 +71,7 @@ func (*server) GetLogs(ctx context.Context, in *Void) (*Pods, error) {
 			}
 
 			if err := scanner.Err(); err != nil {
-				logger.Err(grpcToken, "Error reading logs for pod %s in namespace %s: %s", pod.Name, pod.Namespace, err)
-				errChan <- err
+				logger.Warn(grpcToken, "Error reading logs for pod %s in namespace %s: %s", pod.Name, pod.Namespace, err)
 				return
 			}
 
@@ -80,16 +86,7 @@ func (*server) GetLogs(ctx context.Context, in *Void) (*Pods, error) {
 	}
 	wg.Wait()
 
-	close(errChan)
 	close(podLogsChan)
-	if len(errChan) > 0 {
-		for err := range errChan {
-			if err != nil {
-				logger.Err(grpcToken, "Error occurred while fetching pod logs: %s", err)
-				return nil, err
-			}
-		}
-	}
 
 	pods := &Pods{}
 	logger.Debug(grpcToken, "########## Pod Logs ##########")

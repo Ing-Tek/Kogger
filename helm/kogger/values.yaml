@@ -15,7 +15,7 @@ lifecycle:
     exec:
       command: ["sleep", "15"]
 
-port: 8080
+port: 9935
 logLevel: DEBUG
 
 maximumStorageUses: 50
@@ -40,7 +40,14 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 8080
+  port: 9935
+
+cronjob:
+  schedule: "0 * * * *"
+
+kogger:
+  host: kogger.kogger.svc.cluster.local
+  port: 9935
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

@@ -18,11 +18,8 @@ import (
 )
 
 var (
-	DbPort     string
-	DbHostname string
-	DbUser     string
-	DbPassword string
-	DbName     string
+	KoggerHost string
+	KoggerPort string
 )
 
 type server struct {
@@ -56,7 +53,7 @@ func Run() {
 			return def
 		}
 		return port
-	}("8080")
+	}("9935")
 	log.Printf("started gRPC server on port %s", fmt.Sprintf("%v", port))
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%v", port))
 	if err != nil {

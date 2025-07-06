@@ -8,7 +8,6 @@ heritage: {{ .Release.Service }}
 release: {{ .Release.Name }}
 chart: {{ .Chart.Name }}
 app: "{{ template "kogger.name" . }}"
-layer: vault
 {{- end -}}
 
 {{/* matchLabels */}}

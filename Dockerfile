@@ -6,7 +6,7 @@ RUN GRPC_HEALTH_PROBE_VERSION=v0.4.24 && \
 
 WORKDIR /root/
 
-EXPOSE 8080
+EXPOSE 9935
 
 COPY ./app /root/app
 

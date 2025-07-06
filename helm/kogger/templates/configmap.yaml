@@ -7,3 +7,5 @@ metadata:
 data:
   EXPOSE_PORT: {{ .Values.port | quote }}
   LOG_LEVEL: {{ .Values.logLevel | quote }}
+  KOGGER_HOST: {{ .Values.kogger.host | quote }}
+  KOGGER_PORT: {{ .Values.kogger.port | quote }}
