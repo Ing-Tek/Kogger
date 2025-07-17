@@ -1,0 +1,90 @@
+---
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: "API for kogger"
+basePath: "/api"
+tags:
+- name: "Logs"
+  description: "Endpoints for logs"
+paths:
+  /logs:
+    get:
+      tags:
+      - "Logs"
+      summary: "Get all logs"
+      operationId: "getLogs"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        "200":
+          description: "All logs retrieved successfully"
+          schema:
+            $ref: "#/definitions/LogResponse"
+        "401":
+          description: "Unauthorized"
+        "403":
+          description: "Forbidden"
+        "404":
+          description: "Not Found"
+definitions:
+  LogResponse:
+    type: "object"
+    properties:
+      Logs:
+        type: "array"
+        items:
+          $ref: "#/definitions/Logs"
+    example:
+      Logs:
+      - node: "node"
+        pod: "pod"
+        namespace: "namespace"
+        logs: "logs"
+        status: "status"
+      - node: "node"
+        pod: "pod"
+        namespace: "namespace"
+        logs: "logs"
+        status: "status"
+  Logs:
+    type: "object"
+    required:
+    - "logs"
+    - "namespace"
+    - "node"
+    - "pod"
+    - "status"
+    properties:
+      namespace:
+        type: "string"
+        description: "Namespace of the pod"
+      pod:
+        type: "string"
+        description: "Name of the pod"
+      status:
+        type: "string"
+        description: "Status of the pod"
+      node:
+        type: "string"
+        description: "Node where the pod is running"
+      logs:
+        type: "string"
+        description: "Logs of the pod"
+    example:
+      node: "node"
+      pod: "pod"
+      namespace: "namespace"
+      logs: "logs"
+      status: "status"
+  Response:
+    type: "object"
+    required:
+    - "message"
+    - "token"
+    properties:
+      token:
+        type: "string"
+      message:
+        type: "string"
